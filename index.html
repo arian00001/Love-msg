@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>love msg </title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Firebase Compat SDKs (For Strict Storage Integration) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Lora', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        roseWhite: '#FFF5F7',
+                        roseCloud: '#F5D0D7',
+                        roseBorder: '#E6B8C0',
+                        roseDark: '#5A3B41',
+                        roseMuted: '#9E7077',
+                        accent: '#E06A83',
+                        accentHover: '#C94E67',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF5F7;
+            color: #5A3B41;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF5F7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F5D0D7;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E06A83;
+        }
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .heart-pulse {
+            animation: heartPulse 1.5s infinite ease-in-out;
+        }
+        
+        /* Voice Recording Animation */
+        @keyframes recordingPulse {
+            0% { box-shadow: 0 0 0 0 rgba(224, 106, 131, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(224, 106, 131, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(224, 106, 131, 0); }
+        }
+        .recording-active {
+            animation: recordingPulse 1.5s infinite;
+            background-color: #E06A83 !important;
+            color: white !important;
+        }
+        
+        /* Voice Message Bubble */
+        .voice-bubble {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .voice-bubble:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-accent/20 selection:text-roseDark">
+
+    <div class="h-6"></div>
+
+    <!-- Main Love Container -->
+    <main class="flex-grow flex flex-col items-center justify-center w-full max-w-xl mx-auto px-6 py-12 relative">
+        
+        <!-- FIRST STEP: LOVE DECISION CARD -->
+        <div id="love-question-card" class="w-full bg-roseCloud/50 border border-roseBorder/60 rounded-3xl p-8 md:p-10 shadow-xl shadow-roseCloud/30 text-center transition-all duration-500 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-roseCloud rounded-full blur-xl opacity-60"></div>
+            <div class="absolute -bottom-10 -left-10 w-24 h-24 bg-roseCloud rounded-full blur-xl opacity-60"></div>
+
+            <div class="mb-6 flex justify-center">
+                <svg class="w-14 h-14 text-accent fill-accent/10 heart-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+            </div>
+            
+            <h2 class="font-serif text-2xl md:text-3xl text-roseDark tracking-tight mb-8 font-semibold flex items-center justify-center gap-2">
+                <span>Do you love me?</span>
+                <svg class="w-7 h-7 text-accent animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" fill="currentColor" class="text-accent/20"/>
+                    <path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
+                    <path d="M12 15a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0v-1a4 4 0 0 0-4-4Z"/>
+                    <path d="M2 12a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8H6a4 4 0 0 0-4 4Z"/>
+                    <path d="M15 12a4 4 0 0 0 4 4h1a4 4 0 0 0 0-8h-1a4 4 0 0 0-4 4Z"/>
+                </svg>
+            </h2>
+
+            <div class="flex justify-center items-center gap-4 relative min-h-[60px]" id="action-buttons-container">
+                <button 
+                    onclick="handleLoveResponse(true)" 
+                    class="px-8 py-3 bg-accent hover:bg-accentHover text-white font-semibold rounded-2xl shadow-md shadow-accent/20 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2"
+                >
+                    <span>Yes!</span>
+                    <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    </svg>
+                </button>
+
+                <button 
+                    id="no-button"
+                    onmouseenter="evadeButton()"
+                    onclick="evadeButton()"
+                    class="px-6 py-3 bg-roseWhite border border-roseBorder text-roseMuted font-medium rounded-2xl transition-all duration-200 shadow-sm"
+                >
+                    No
+                </button>
+            </div>
+        </div>
+
+        <!-- SECOND STEP: 15S COUNTDOWN SCREEN -->
+        <div id="countdown-card" class="w-full bg-roseCloud/50 border border-roseBorder/60 rounded-3xl p-8 md:p-10 shadow-xl text-center hidden flex-col items-center justify-center transition-all duration-500">
+            <div class="mb-4">
+                <i data-lucide="sparkles" class="w-10 h-10 text-accent animate-pulse"></i>
+            </div>
+            
+            <p class="font-serif text-lg md:text-xl text-roseDark leading-relaxed mb-6 font-medium">
+                Do you really love me or want to see me? Then write your feelings in the message...
+            </p>
+
+            <div class="relative w-20 h-20 flex items-center justify-center mb-6">
+                <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                    <circle cx="40" cy="40" r="34" stroke="#FFF5F7" stroke-width="6" fill="transparent" />
+                    <circle id="countdown-ring" cx="40" cy="40" r="34" stroke="#E06A83" stroke-width="6" fill="transparent" 
+                            stroke-dasharray="213.6" stroke-dashoffset="0" class="transition-all duration-1000 ease-linear"/>
+                </svg>
+                <span id="countdown-number" class="text-2xl font-bold text-roseDark">15</span>
+            </div>
+
+            <button 
+                onclick="skipCountdown()" 
+                class="px-6 py-2 bg-roseWhite hover:bg-roseCloud border border-roseBorder text-xs text-roseMuted hover:text-roseDark font-medium rounded-xl transition-all"
+            >
+                Skip ➔
+            </button>
+        </div>
+
+        <!-- THIRD STEP: REVEALED MESSAGE INPUT & CHAT VIEW -->
+        <div id="interactive-chat-view" class="w-full hidden flex-col gap-6">
+            
+            <!-- Message Input wrapper -->
+            <div id="main-input-wrapper" class="w-full bg-roseCloud/40 border border-roseBorder/60 rounded-3xl p-5 shadow-xl transition-all duration-300 focus-within:border-accent/60">
+                <textarea 
+                    id="user-input" 
+                    placeholder="Write what's in your heart..." 
+                    rows="3" 
+                    class="w-full bg-transparent resize-none outline-none text-roseDark placeholder-roseMuted/60 text-base leading-relaxed"
+                ></textarea>
+
+                <div class="flex items-center justify-between border-t border-roseBorder/40 pt-4 mt-2">
+                    <div class="flex items-center gap-2">
+                        <!-- Gift Rose Attachment button -->
+                        <button onclick="sendRoseGift()" class="p-2 hover:bg-roseCloud rounded-xl text-accent transition-all" title="Add virtual rose">
+                            <i data-lucide="gift" class="w-4 h-4"></i>
+                        </button>
+                        <!-- Voice Record Button -->
+                        <button onclick="toggleVoiceRecording()" id="voice-record-btn" class="p-2 hover:bg-roseCloud rounded-xl text-accent transition-all flex items-center gap-1.5" title="Record voice message">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                            <span id="record-timer" class="text-xs font-mono hidden">00:00</span>
+                        </button>
+                        <!-- Speech Capture indicator -->
+                        <span id="speech-indicator" class="text-xs text-accent hidden flex items-center gap-1.5 font-medium">
+                            <span class="w-2 h-2 rounded-full bg-accent animate-ping"></span> Listening...
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <!-- Voice speech Dictation (Speech to Text) -->
+                        <button onclick="toggleVoiceDictation()" id="mic-btn" class="p-2 hover:bg-roseCloud rounded-xl text-roseMuted hover:text-roseDark transition-all" title="Speech to text">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                        </button>
+                        
+                        <!-- Send Button -->
+                        <button onclick="submitLoveMessage()" class="p-2 bg-accent/20 hover:bg-accent/30 border border-accent/20 hover:border-accent/40 rounded-xl text-accent transition-all">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Timeline Stream -->
+            <div id="chat-timeline" class="flex flex-col gap-4 w-full overflow-y-auto max-h-[45vh] pr-2"></div>
+
+            <!-- Sending Status Loader -->
+            <div id="sending-indicator" class="hidden flex items-start gap-4 p-4 rounded-2xl bg-roseCloud/20 border border-roseBorder/40 animate-pulse">
+                <div class="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                    <span class="w-3.5 h-3.5 rounded-full bg-accent animate-ping"></span>
+                </div>
+                <div class="flex-grow space-y-1">
+                    <span class="text-xs text-accent font-semibold">Sending love letter to bot...</span>
+                    <div class="h-2.5 bg-roseBorder/60 rounded w-2/3"></div>
+                </div>
+            </div>
+            
+            <!-- Continuous follow-up sticky input -->
+            <div id="sticky-chat-input" class="w-full bg-roseCloud/30 border border-roseBorder/50 rounded-2xl p-3 shadow-md hidden transition-all duration-300">
+                <div class="flex items-center gap-3">
+                    <input 
+                        id="sticky-input" 
+                        type="text" 
+                        placeholder="Write more..." 
+                        class="flex-grow bg-transparent outline-none text-roseDark placeholder-roseMuted/50 text-sm"
+                        onkeydown="if(event.key === 'Enter') submitLoveMessage(true)"
+                    >
+                    <div class="flex items-center gap-2">
+                        <!-- Voice Record Mini Button -->
+                        <button onclick="toggleVoiceRecording(true)" id="voice-record-btn-mini" class="p-1.5 hover:bg-roseCloud rounded-lg text-accent transition-all" title="Record voice">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                            <span id="record-timer-mini" class="text-[10px] font-mono hidden ml-1">00:00</span>
+                        </button>
+                        <button onclick="toggleVoiceDictation(true)" class="p-1.5 hover:bg-roseCloud rounded-lg text-roseMuted hover:text-roseDark transition-all">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="submitLoveMessage(true)" class="p-1.5 bg-accent/20 border border-accent/30 text-accent rounded-lg transition-all">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Custom Pink Toast/Popup Notification -->
+    <div id="toast-message" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-roseWhite border border-accent/30 text-roseDark text-xs px-4 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-300">
+        <svg class="w-4 h-4 text-accent fill-accent/10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+        <span id="toast-text">Success</span>
+    </div>
+
+    <!-- Audio Playback Modal for Voice Messages -->
+    <div id="audio-playback-modal" class="fixed inset-0 bg-roseDark/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-roseWhite border border-roseBorder rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center">
+            <button onclick="closeAudioModal()" class="absolute top-4 right-4 text-roseMuted hover:text-roseDark transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center">
+                    <i data-lucide="volume-2" class="w-8 h-8 text-accent"></i>
+                </div>
+                <h3 class="font-serif text-lg text-roseDark font-semibold">Voice Message</h3>
+                <audio id="audio-player" controls class="w-full mt-2"></audio>
+                <p id="audio-timestamp" class="text-xs text-roseMuted"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-6"></div>
+
+    <!-- App Logic Script -->
+    <script>
+        let username = "baby";
+        let apiEndpoint = "https://telegram-api.ayanahamed572.workers.dev/";
+        
+        let db = null;
+        let auth = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-love-app';
+        let isFirebaseConnected = false;
+
+        let countdownTimer = null;
+        let timeLeft = 15;
+        
+        let lastMessageSentTime = 0;
+        let hasReceivedAnyReply = false;
+        let replyFallbackTimer = null;
+
+        // ============ VOICE RECORDING VARIABLES ============
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecordingVoice = false;
+        let recordingStartTime = null;
+        let recordingTimerInterval = null;
+        
+        // Voice message storage in localStorage
+        const VOICE_STORAGE_KEY = 'rose_cloud_voice_messages';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('gf_nickname')) {
+                username = localStorage.getItem('gf_nickname');
+                document.getElementById('setting-username').value = username;
+            }
+            if(localStorage.getItem('telegram_endpoint')) {
+                apiEndpoint = localStorage.getItem('telegram_endpoint');
+                document.getElementById('setting-endpoint').value = apiEndpoint;
+            }
+
+            window.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                    toggleSettingsModal();
+                }
+            });
+
+            lucide.createIcons();
+            setupFirebaseSync();
+            
+            // Load any existing voice messages from localStorage
+            loadStoredVoiceMessages();
+        });
+
+        // ============ VOICE RECORDING FUNCTIONS ============
+        
+        async function toggleVoiceRecording(isMini = false) {
+            if (isRecordingVoice) {
+                stopVoiceRecording();
+                return;
+            }
+            
+            // Check if browser supports MediaRecorder
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast("Voice recording not supported in this browser");
+                return;
+            }
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+                        ? 'audio/webm;codecs=opus' 
+                        : 'audio/webm'
+                });
+                
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    // Stop all tracks to release microphone
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const duration = Math.round((Date.now() - recordingStartTime) / 1000);
+                    
+                    // Save voice message
+                    await saveVoiceMessage(audioBlob, audioUrl, duration);
+                    
+                    // Reset UI
+                    updateRecordingUI(false, isMini);
+                    isRecordingVoice = false;
+                    mediaRecorder = null;
+                    
+                    // Clear timer
+                    if (recordingTimerInterval) {
+                        clearInterval(recordingTimerInterval);
+                        recordingTimerInterval = null;
+                    }
+                };
+                
+                // Start recording
+                mediaRecorder.start();
+                isRecordingVoice = true;
+                recordingStartTime = Date.now();
+                
+                // Update UI to show recording state
+                updateRecordingUI(true, isMini);
+                
+                // Start timer display
+                startRecordingTimer(isMini);
+                
+                showToast("Recording voice message...");
+                
+            } catch (error) {
+                console.error("Error accessing microphone:", error);
+                showToast("Could not access microphone. Please check permissions.");
+            }
+        }
+        
+        function stopVoiceRecording() {
+            if (mediaRecorder && isRecordingVoice) {
+                mediaRecorder.stop();
+            }
+        }
+        
+        function updateRecordingUI(isRecording, isMini = false) {
+            const mainBtn = document.getElementById('voice-record-btn');
+            const miniBtn = document.getElementById('voice-record-btn-mini');
+            const mainTimer = document.getElementById('record-timer');
+            const miniTimer = document.getElementById('record-timer-mini');
+            
+            if (isMini) {
+                if (miniBtn) {
+                    if (isRecording) {
+                        miniBtn.classList.add('recording-active');
+                    } else {
+                        miniBtn.classList.remove('recording-active');
+                    }
+                }
+                if (miniTimer) {
+                    miniTimer.classList.toggle('hidden', !isRecording);
+                }
+            } else {
+                if (mainBtn) {
+                    if (isRecording) {
+                        mainBtn.classList.add('recording-active');
+                    } else {
+                        mainBtn.classList.remove('recording-active');
+                    }
+                }
+                if (mainTimer) {
+                    mainTimer.classList.toggle('hidden', !isRecording);
+                }
+            }
+        }
+        
+        function startRecordingTimer(isMini = false) {
+            if (recordingTimerInterval) clearInterval(recordingTimerInterval);
+            
+            recordingTimerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                const mainTimer = document.getElementById('record-timer');
+                const miniTimer = document.getElementById('record-timer-mini');
+                
+                if (isMini && miniTimer) {
+                    miniTimer.textContent = timeStr;
+                } else if (mainTimer) {
+                    mainTimer.textContent = timeStr;
+                }
+                
+                // Auto-stop after 2 minutes
+                if (elapsed >= 120) {
+                    stopVoiceRecording();
+                    showToast("Maximum recording time reached (2 minutes)");
+                }
+            }, 200);
+        }
+        
+        async function saveVoiceMessage(audioBlob, audioUrl, duration) {
+            const voiceMessage = {
+                id: Date.now().toString(),
+                blob: await blobToBase64(audioBlob),
+                url: audioUrl,
+                duration: duration,
+                timestamp: Date.now(),
+                sender: 'user',
+                senderName: username
+            };
+            
+            // Save to localStorage
+            let voiceMessages = JSON.parse(localStorage.getItem(VOICE_STORAGE_KEY) || '[]');
+            voiceMessages.push(voiceMessage);
+            localStorage.setItem(VOICE_STORAGE_KEY, JSON.stringify(voiceMessages));
+            
+            // Display in chat
+            appendVoiceMessageToChat(voiceMessage);
+            
+            // Try to send to Telegram
+            await sendVoiceToTelegram(audioBlob, duration);
+            
+            // Also save to Firestore if connected
+            if (isFirebaseConnected && db) {
+                try {
+                    await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('messages').add({
+                        sender: 'user',
+                        senderName: username,
+                        text: `[Voice Message - ${duration}s]`,
+                        voiceData: voiceMessage.blob,
+                        voiceDuration: duration,
+                        timestamp: Date.now(),
+                        type: 'voice'
+                    });
+                } catch (e) {
+                    console.log("Firestore voice save error:", e);
+                }
+            }
+            
+            showToast(`Voice message saved (${duration}s)`);
+        }
+        
+        async function sendVoiceToTelegram(audioBlob, duration) {
+            const formattedMsg = `🎤 Voice message from ${username} (${duration}s)`;
+            
+            const targetUrl = new URL(apiEndpoint);
+            targetUrl.searchParams.append('text', formattedMsg);
+            
+            // Create FormData to send the audio file
+            const formData = new FormData();
+            formData.append('text', formattedMsg);
+            formData.append('message', formattedMsg);
+            formData.append('audio', audioBlob, `voice_message_${Date.now()}.webm`);
+            
+            try {
+                const response = await fetch(targetUrl.toString(), {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    console.log("Voice message sent to Telegram successfully");
+                    showToast("Voice sent to Telegram!");
+                } else {
+                    console.warn("Failed to send voice to Telegram, saved locally");
+                    showToast("Voice saved locally (Telegram unavailable)");
+                }
+            } catch (err) {
+                console.error("Telegram voice send error:", err);
+                showToast("Voice saved locally (offline)");
+            }
+        }
+        
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        
+        function appendVoiceMessageToChat(voiceMessage) {
+            const timeline = document.getElementById('chat-timeline');
+            const row = document.createElement('div');
+            const durationStr = voiceMessage.duration > 60 
+                ? `${Math.floor(voiceMessage.duration / 60)}:${String(voiceMessage.duration % 60).padStart(2, '0')}` 
+                : `0:${String(voiceMessage.duration).padStart(2, '0')}`;
+            
+            row.className = 'flex flex-col items-end gap-1 w-full';
+            row.innerHTML = `
+                <span class="text-[10px] uppercase tracking-wider text-roseMuted font-medium px-2">${voiceMessage.senderName}</span>
+                <div class="voice-bubble max-w-[85%] bg-accent/15 border border-accent/30 text-roseDark cursor-pointer shadow-md" 
+                     onclick="playVoiceMessage('${voiceMessage.id}')"
+                     data-voice-id="${voiceMessage.id}">
+                    <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2">
+                            <div class="h-1.5 bg-accent/30 rounded-full flex-grow">
+                                <div class="h-full bg-accent rounded-full" style="width: ${Math.min(100, voiceMessage.duration * 2)}%"></div>
+                            </div>
+                            <span class="text-xs text-roseMuted font-mono">${durationStr}</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-roseMuted">🎤</span>
+                </div>
+            `;
+            
+            timeline.appendChild(row);
+            timeline.scrollTop = timeline.scrollHeight;
+        }
+        
+        function playVoiceMessage(voiceId) {
+            const voiceMessages = JSON.parse(localStorage.getItem(VOICE_STORAGE_KEY) || '[]');
+            const voiceMsg = voiceMessages.find(v => v.id === voiceId);
+            
+            if (voiceMsg) {
+                const modal = document.getElementById('audio-playback-modal');
+                const audioPlayer = document.getElementById('audio-player');
+                const audioTimestamp = document.getElementById('audio-timestamp');
+                
+                audioPlayer.src = voiceMsg.url || voiceMsg.blob;
+                audioTimestamp.textContent = `Recorded on ${new Date(voiceMsg.timestamp).toLocaleString()} · Duration: ${voiceMsg.duration}s`;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                
+                audioPlayer.play().catch(e => console.log("Audio play error:", e));
+            }
+        }
+        
+        function closeAudioModal() {
+            const modal = document.getElementById('audio-playback-modal');
+            const audioPlayer = document.getElementById('audio-player');
+            audioPlayer.pause();
+            audioPlayer.src = '';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        function loadStoredVoiceMessages() {
+            // This function can be used to reload voice messages from localStorage
+            // when needed (e.g., after page refresh if Firestore is unavailable)
+            const voiceMessages = JSON.parse(localStorage.getItem(VOICE_STORAGE_KEY) || '[]');
+            console.log(`Loaded ${voiceMessages.length} stored voice messages`);
+        }
+
+        // ============ ORIGINAL FUNCTIONS (UNCHANGED) ============
+
+        async function setupFirebaseSync() {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                try {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    firebase.initializeApp(firebaseConfig);
+                    auth = firebase.auth();
+                    db = firebase.firestore();
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await auth.signInWithCustomToken(__initial_auth_token);
+                    } else {
+                        await auth.signInAnonymously();
+                    }
+
+                    isFirebaseConnected = true;
+                    
+                    db.collection('artifacts').doc(appId).collection('public').doc('data').collection('messages')
+                        .onSnapshot((snapshot) => {
+                            let msgs = [];
+                            snapshot.forEach((doc) => {
+                                const data = doc.data();
+                                msgs.push({ id: doc.id, ...data });
+                                if (data.sender !== 'user') {
+                                    hasReceivedAnyReply = true;
+                                    if (replyFallbackTimer) {
+                                        clearTimeout(replyFallbackTimer);
+                                    }
+                                }
+                            });
+                            msgs.sort((a, b) => a.timestamp - b.timestamp);
+                            renderTimeline(msgs);
+                        }, (error) => {
+                            console.log("Firestore error:", error);
+                        });
+
+                } catch (e) {
+                    console.error("Firebase sync bypassed/offline:", e);
+                }
+            }
+        }
+
+        function evadeButton() {
+            const noBtn = document.getElementById('no-button');
+            const randomX = Math.floor((Math.random() - 0.5) * 200);
+            const randomY = Math.floor((Math.random() - 0.5) * 120);
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.95)`;
+        }
+
+        async function handleLoveResponse(userChoice) {
+            if (userChoice) {
+                transmitToTelegram("I love you too baby");
+                document.getElementById('love-question-card').classList.add('hidden');
+                document.getElementById('countdown-card').classList.remove('hidden');
+                document.getElementById('countdown-card').classList.add('flex');
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            const numDisplay = document.getElementById('countdown-number');
+            const ring = document.getElementById('countdown-ring');
+            const totalDash = 213.6;
+
+            timeLeft = 15;
+            numDisplay.innerText = timeLeft;
+
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                numDisplay.innerText = timeLeft;
+                const offset = (totalDash - (totalDash * timeLeft) / 15);
+                ring.style.strokeDashoffset = offset;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    revealInputWorkspace();
+                }
+            }, 1000);
+        }
+
+        function skipCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            revealInputWorkspace();
+        }
+
+        function revealInputWorkspace() {
+            document.getElementById('countdown-card').classList.add('hidden');
+            document.getElementById('interactive-chat-view').classList.remove('hidden');
+            document.getElementById('interactive-chat-view').classList.add('flex');
+            showToast("Write your thoughts or record a voice message!");
+        }
+
+        function sendRoseGift() {
+            const input = document.getElementById('user-input');
+            input.value = input.value ? input.value + " [Sent you a rose flower]" : "[Sent you a rose flower]";
+            input.focus();
+            showToast("Added virtual rose!");
+        }
+
+        // Speech to Text Recognition
+        let isDictating = false;
+        let speechRecognition;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            speechRecognition = new SpeechRecognition();
+            speechRecognition.continuous = false;
+            speechRecognition.interimResults = false;
+            speechRecognition.lang = 'en-US';
+
+            speechRecognition.onstart = () => {
+                isDictating = true;
+                document.getElementById('speech-indicator').classList.remove('hidden');
+                document.getElementById('mic-btn').classList.add('text-accent', 'bg-accent/10');
+            };
+
+            speechRecognition.onend = () => {
+                isDictating = false;
+                document.getElementById('speech-indicator').classList.add('hidden');
+                document.getElementById('mic-btn').classList.remove('text-accent', 'bg-accent/10');
+            };
+
+            speechRecognition.onresult = (event) => {
+                const speechToText = event.results[0][0].transcript;
+                const homeInput = document.getElementById('user-input');
+                const stickyInput = document.getElementById('sticky-input');
+
+                if (document.getElementById('sticky-chat-input').classList.contains('hidden')) {
+                    homeInput.value = homeInput.value ? homeInput.value + ' ' + speechToText : speechToText;
+                    homeInput.focus();
+                } else {
+                    stickyInput.value = stickyInput.value ? stickyInput.value + ' ' + speechToText : speechToText;
+                    stickyInput.focus();
+                }
+                showToast("Voice captured!");
+            };
+        }
+
+        function toggleVoiceDictation(isSticky = false) {
+            if (!speechRecognition) {
+                showToast("Speech recognition not supported.");
+                return;
+            }
+            if (isDictating) {
+                speechRecognition.stop();
+            } else {
+                speechRecognition.start();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            const text = document.getElementById('toast-text');
+            text.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        function saveSettings() {
+            const name = document.getElementById('setting-username').value.trim();
+            const endpoint = document.getElementById('setting-endpoint').value.trim();
+
+            if (name) {
+                username = name;
+                localStorage.setItem('gf_nickname', name);
+            }
+            if (endpoint) {
+                apiEndpoint = endpoint;
+                localStorage.setItem('telegram_endpoint', endpoint);
+            }
+
+            showToast("Settings updated!");
+            toggleSettingsModal();
+        }
+
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        async function submitLoveMessage(isSticky = false) {
+            const homeInput = document.getElementById('user-input');
+            const stickyInput = document.getElementById('sticky-input');
+            
+            const prompt = isSticky ? stickyInput.value.trim() : homeInput.value.trim();
+            if (!prompt) {
+                // Check if there's a special command like "Voice"
+                if (isSticky && stickyInput.value.trim().toLowerCase() === 'voice') {
+                    showAllStoredVoices();
+                    stickyInput.value = '';
+                    return;
+                }
+                if (!isSticky && homeInput.value.trim().toLowerCase() === 'voice') {
+                    showAllStoredVoices();
+                    homeInput.value = '';
+                    return;
+                }
+                showToast("Type something first!");
+                return;
+            }
+            
+            // Check for "Voice" command to show stored voice messages
+            if (prompt.toLowerCase() === 'voice') {
+                showAllStoredVoices();
+                if (isSticky) stickyInput.value = '';
+                else homeInput.value = '';
+                return;
+            }
+
+            if (isSticky) {
+                stickyInput.value = "";
+            } else {
+                homeInput.value = "";
+                document.getElementById('main-input-wrapper').classList.add('hidden');
+                document.getElementById('sticky-chat-input').classList.remove('hidden');
+            }
+
+            if (isFirebaseConnected && db) {
+                try {
+                    await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('messages').add({
+                        sender: 'user',
+                        senderName: username,
+                        text: prompt,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {
+                    appendLocalMessage('user', prompt);
+                }
+            } else {
+                appendLocalMessage('user', prompt);
+            }
+
+            hasReceivedAnyReply = false;
+            lastMessageSentTime = Date.now();
+            await transmitToTelegram(prompt);
+
+            if (replyFallbackTimer) clearTimeout(replyFallbackTimer);
+            replyFallbackTimer = setTimeout(() => {
+                if (!hasReceivedAnyReply) {
+                    triggerAutoReply();
+                }
+            }, 5000);
+        }
+        
+        function showAllStoredVoices() {
+            const voiceMessages = JSON.parse(localStorage.getItem(VOICE_STORAGE_KEY) || '[]');
+            
+            if (voiceMessages.length === 0) {
+                showToast("No voice messages stored yet!");
+                return;
+            }
+            
+            // Add a system message showing all stored voices
+            const timeline = document.getElementById('chat-timeline');
+            const row = document.createElement('div');
+            row.className = 'flex flex-col items-center gap-3 w-full my-4';
+            
+            let voiceListHtml = voiceMessages.map((vm, index) => {
+                const durationStr = vm.duration > 60 
+                    ? `${Math.floor(vm.duration / 60)}:${String(vm.duration % 60).padStart(2, '0')}` 
+                    : `0:${String(vm.duration).padStart(2, '0')}`;
+                const date = new Date(vm.timestamp).toLocaleString();
+                
+                return `
+                    <div class="voice-bubble bg-roseCloud/40 border border-roseBorder/60 w-full cursor-pointer shadow-md" 
+                         onclick="playVoiceMessage('${vm.id}')">
+                        <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                        <div class="flex-grow">
+                            <div class="flex items-center gap-2">
+                                <div class="h-1.5 bg-accent/30 rounded-full flex-grow">
+                                    <div class="h-full bg-accent rounded-full" style="width: ${Math.min(100, vm.duration * 2)}%"></div>
+                                </div>
+                                <span class="text-xs text-roseMuted font-mono">${durationStr}</span>
+                            </div>
+                            <span class="text-[10px] text-roseMuted">${date} · Voice #${index + 1}</span>
+                        </div>
+                        <span class="text-[10px] text-roseMuted">🎤</span>
+                    </div>
+                `;
+            }).join('');
+            
+            row.innerHTML = `
+                <span class="text-xs uppercase tracking-wider text-roseMuted font-medium bg-roseCloud/30 px-4 py-1 rounded-full">
+                    📂 Stored Voice Messages (${voiceMessages.length})
+                </span>
+                <div class="w-full space-y-2">
+                    ${voiceListHtml}
+                </div>
+            `;
+            
+            timeline.appendChild(row);
+            timeline.scrollTop = timeline.scrollHeight;
+            
+            showToast(`Showing ${voiceMessages.length} stored voice messages`);
+        }
+
+        async function transmitToTelegram(messageContent) {
+            const indicator = document.getElementById('sending-indicator');
+            indicator.classList.remove('hidden');
+
+            const formattedMsg = `💌 Msg from ${username}:\n\n"${messageContent}"`;
+            
+            const targetUrl = new URL(apiEndpoint);
+            targetUrl.searchParams.append('text', formattedMsg);
+
+            let success = false;
+            try {
+                const response = await fetch(targetUrl.toString(), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: formattedMsg, message: formattedMsg })
+                });
+                if (response.ok) success = true;
+            } catch (err) {
+                console.error("Connection problem:", err);
+            }
+
+            indicator.classList.add('hidden');
+            if (success) showToast("Sent to Telegram!");
+        }
+
+        function triggerAutoReply() {
+            const botMessage = "thanks for msg mam boss really love you thanks for your msg mam";
+            
+            if (isFirebaseConnected && db) {
+                try {
+                    db.collection('artifacts').doc(appId).collection('public').doc('data').collection('messages').add({
+                        sender: 'boyfriend',
+                        senderName: "Love Agent",
+                        text: botMessage,
+                        timestamp: Date.now()
+                    });
+                } catch (e) {
+                    appendLocalMessage('boyfriend', botMessage, "Love Agent");
+                }
+            } else {
+                appendLocalMessage('boyfriend', botMessage, "Love Agent");
+            }
+        }
+
+        function appendLocalMessage(sender, text, senderName = username) {
+            const timeline = document.getElementById('chat-timeline');
+            const row = document.createElement('div');
+            const isUser = sender === 'user';
+            
+            row.className = `flex flex-col ${isUser ? 'items-end' : 'items-start'} gap-1 w-full`;
+            const textBgColor = isUser ? 'bg-accent/15 border-accent/30 text-roseDark' : 'bg-roseCloud/40 border-roseBorder/60 text-roseDark';
+            const alignment = isUser ? 'text-right' : 'text-left';
+
+            row.innerHTML = `
+                <span class="text-[10px] uppercase tracking-wider text-roseMuted font-medium px-2">${senderName}</span>
+                <div class="max-w-[85%] border px-4 py-3 rounded-2xl ${textBgColor} ${alignment} shadow-md text-sm leading-relaxed">
+                    <div>${text.split('\n').join('<br>')}</div>
+                </div>
+            `;
+            timeline.appendChild(row);
+            timeline.scrollTop = timeline.scrollHeight;
+        }
+
+        function renderTimeline(messages) {
+            const timeline = document.getElementById('chat-timeline');
+            timeline.innerHTML = "";
+            
+            messages.forEach((msg) => {
+                const isUser = msg.sender === 'user';
+                const messageRow = document.createElement('div');
+                messageRow.className = `flex flex-col ${isUser ? 'items-end' : 'items-start'} gap-1 w-full`;
+                
+                const nameLabel = isUser ? msg.senderName : "Love Agent";
+                const textBgColor = isUser ? 'bg-accent/15 border-accent/30 text-roseDark' : 'bg-roseCloud/40 border-roseBorder/60 text-roseDark';
+                const alignment = isUser ? 'text-right' : 'text-left';
+                
+                // Check if this is a voice message
+                if (msg.type === 'voice' && msg.voiceData) {
+                    messageRow.innerHTML = `
+                        <span class="text-[10px] uppercase tracking-wider text-roseMuted font-medium px-2">${nameLabel}</span>
+                        <div class="voice-bubble max-w-[85%] bg-accent/15 border border-accent/30 text-roseDark cursor-pointer shadow-md" 
+                             onclick="playVoiceMessage('${msg.id}')"
+                             data-voice-id="${msg.id}">
+                            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            </svg>
+                            <div class="flex-grow">
+                                <div class="flex items-center gap-2">
+                                    <div class="h-1.5 bg-accent/30 rounded-full flex-grow">
+                                        <div class="h-full bg-accent rounded-full" style="width: ${Math.min(100, (msg.voiceDuration || 5) * 2)}%"></div>
+                                    </div>
+                                    <span class="text-xs text-roseMuted font-mono">0:${String(msg.voiceDuration || 5).padStart(2, '0')}</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] text-roseMuted">🎤</span>
+                        </div>
+                    `;
+                    
+                    // Store voice data in localStorage for playback
+                    let voiceMessages = JSON.parse(localStorage.getItem(VOICE_STORAGE_KEY) || '[]');
+                    const existingIndex = voiceMessages.findIndex(v => v.id === msg.id);
+                    if (existingIndex === -1) {
+                        voiceMessages.push({
+                            id: msg.id,
+                            blob: msg.voiceData,
+                            url: msg.voiceData,
+                            duration: msg.voiceDuration || 5,
+                            timestamp: msg.timestamp,
+                            sender: msg.sender,
+                            senderName: msg.senderName || nameLabel
+                        });
+                        localStorage.setItem(VOICE_STORAGE_KEY, JSON.stringify(voiceMessages));
+                    }
+                } else {
+                    messageRow.innerHTML = `
+                        <span class="text-[10px] uppercase tracking-wider text-roseMuted font-medium px-2">${nameLabel}</span>
+                        <div class="max-w-[85%] border px-4 py-3 rounded-2xl ${textBgColor} ${alignment} shadow-md text-sm leading-relaxed">
+                            <div>${msg.text ? msg.text.split('\n').join('<br>') : ''}</div>
+                        </div>
+                    `;
+                }
+                
+                timeline.appendChild(messageRow);
+            });
+
+            timeline.scrollTop = timeline.scrollHeight;
+        }
+
+        async function resetApp() {
+            if (isFirebaseConnected && db) {
+                try {
+                    const snapshot = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('messages').get();
+                    const batch = db.batch();
+                    snapshot.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } catch (e) {
+                    console.log("Firebase Reset bypassed.");
+                }
+            }
+            
+            document.getElementById('chat-timeline').innerHTML = "";
+            document.getElementById('interactive-chat-view').classList.add('hidden');
+            document.getElementById('main-input-wrapper').classList.remove('hidden');
+            document.getElementById('sticky-chat-input').classList.add('hidden');
+            
+            document.getElementById('countdown-card').classList.add('hidden');
+            document.getElementById('love-question-card').classList.remove('hidden');
+            
+            const noBtn = document.getElementById('no-button');
+            noBtn.style.transform = `translate(0px, 0px) scale(1)`;
+
+            showToast("Workspace cleared!");
+        }
+    </script>
+</body>
+                          </html>
